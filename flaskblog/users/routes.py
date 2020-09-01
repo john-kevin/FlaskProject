@@ -12,9 +12,9 @@ users = Blueprint('users', __name__)
 @users.route('/settings')
 def settings():
     app.config['KEV'] = os.environ.get('KEV')
-    for conf in app.config:
+    for conf,val in app.config.items():
         print(conf)
-        print(app.config[conf])
+        print(val)
     return render_template('settings.html', config=app.config)
 
 @users.route("/register", methods=['GET', 'POST'])

@@ -4,7 +4,7 @@ from datetime import date
 from PIL import Image
 from flask import url_for, current_app
 from flask_mail import Message
-from flaskblog import app, mail
+from flaskblog import mail
 
 
 
@@ -14,7 +14,7 @@ def save_picture(form_picture):
     today = date.today()
     thea = today.strftime("%b-%d-%Y")
     picture_fn = random_hex + '-SALT-' + str(thea) + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_fn)
 
     output_size = (125,125)
     i = Image.open(form_picture)
@@ -24,7 +24,7 @@ def save_picture(form_picture):
     return picture_fn
 
 def delete_picture(old_image):
-	old_image_path = os.path.join(app.root_path, 'static/profile_pics', old_image)
+	old_image_path = os.path.join(current_app.root_path, 'static/profile_pics', old_image)
 
 	if os.path.exists(old_image_path):
 	    print('Deleting old picture:' + old_image_path)
