@@ -12,11 +12,10 @@ users = Blueprint('users', __name__)
 @users.route('/settings')
 def settings():
     app.config['KEV'] = os.environ.get('KEV')
-    for conf, val in app.config.items():
+    for conf,val in app.config.items():
         print(conf)
         print(val)
     return render_template('settings.html', config=app.config)
-
 
 @users.route("/register", methods=['GET', 'POST'])
 def register():
@@ -33,7 +32,6 @@ def register():
     print(form.errors)
     return render_template('register.html', title='Register', form=form)
 
-
 @users.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -49,12 +47,10 @@ def login():
             flash('Invalid email or password!', 'danger')
     return render_template('login.html', title="Login", form=form)
 
-
 @users.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('main.home'))
-
 
 @users.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -70,24 +66,22 @@ def account():
         current_user.email = form.email.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
-        return redirect(url_for('users.account'))
+        return redirect (url_for('users.account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
-
+                            image_file=image_file, form=form)
 
 @users.route("/user/<string:username>")
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user)\
-        .order_by(Post.date_posted.desc())\
-        .paginate(per_page=5, page=page)
+            .order_by(Post.date_posted.desc())\
+            .paginate(per_page=5, page=page)
     return render_template('user_posts.html', posts=posts, user=user)
-
 
 @users.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
@@ -101,12 +95,10 @@ def reset_request():
         return redirect(url_for('users.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
-# Todo: Expire the reset password token after its been used.
-# Links:
+#Todo: Expire the reset password token after its been used.
+#Links:
 #   https://stackoverflow.com/questions/56169829/how-to-forcefully-expire-token-after-using-it-before-expiry-time-set-for-the-to
 #   https://stackoverflow.com/questions/38427923/how-does-flask-sessions-work
-
-
 @users.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_token(token):
     if current_user.is_authenticated:
